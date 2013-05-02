@@ -5,16 +5,16 @@ a player entity
 //These objects (NormalPlayer,FlyingPlayer) encapsulates the state to of the player object depending on whether
 //the player is in a normal state or flying state
 
-CreateDefaultPlayerStateObject = function(_playerEntity){
+CreateDefaultPlayerStateObject = function(_playerEntity) {
 
-	function DefaultPlayerStateClass(playerEntity){
+	function DefaultPlayerStateClass(playerEntity) {
 		
 		playerEntity.gravity=0.98;
-	
-	 // adjust the bounding box
+
+        // adjust the bounding box
     	playerEntity.updateColRect(1, 48, -1, 0);
 	
-		this.setWalkAnimation = function(){
+		this.setWalkAnimation = function() {
 		 	playerEntity.setCurrentAnimation("walk");
 		}
 		
@@ -23,6 +23,7 @@ CreateDefaultPlayerStateObject = function(_playerEntity){
             me.audio.play("Footsetps_single");
 
 			playerEntity.flipX(true);
+
         	// update the entity velocity
         	playerEntity.vel.x -= playerEntity.accel.x * me.timer.tick;
 		}
@@ -30,9 +31,11 @@ CreateDefaultPlayerStateObject = function(_playerEntity){
 		this.moveRight = function()
 		{
             me.audio.play("Footsetps_single");
-			  // unflip the sprite
+			
+            // unflip the sprite
         	playerEntity.flipX(false);
-        	// update the entity velocity
+        	
+            // update the entity velocity
         	playerEntity.vel.x += playerEntity.accel.x * me.timer.tick;
 		}
 		
@@ -72,13 +75,12 @@ CreateDefaultPlayerStateObject = function(_playerEntity){
 
 }
 
-CreateFlyingPlayerStateObject = function(_playerEntity){
+CreateFlyingPlayerStateObject = function(_playerEntity) {
 
-	function FlyingPlayerStateClass(playerEntity){
+	function FlyingPlayerStateClass(playerEntity) {
 		
 		playerEntity.gravity=0.1;
-	
-        
+	    
         // adjust the bounding box
     	playerEntity.updateColRect(1, 48, -1, 0);
 		   
@@ -117,13 +119,11 @@ CreateFlyingPlayerStateObject = function(_playerEntity){
 		{
 			return "flying";
 		}
-
-		
 	}
 	return new FlyingPlayerStateClass(_playerEntity);
 }
 
-playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend({
+playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend( {
  
     /* -----
  
@@ -153,22 +153,21 @@ playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend({
         // call the constructor
         this.parent(x, y, settings);
         
-        if(me.levelDirector.getCurrentLevelId() == localStorage.checkpointLevel && !fromMainMenu){
+        if(me.levelDirector.getCurrentLevelId() == localStorage.checkpointLevel && !fromMainMenu) {
         	this.pos.x = Number(localStorage.checkpointX);
         	this.pos.y = Number(localStorage.checkpointY);
-		//me.game.HUD.setItemValue("score", localStorage.checkpointScore);
+            //me.game.HUD.setItemValue("score", localStorage.checkpointScore);
        		this.health = Number(localStorage.checkpointHealth);
-		this.ammo = Number(localStorage.checkpointAmmo);
-    	}else{
-		fromMainMenu = false;
-       		this.health = 100;
-		this.ammo = 20;
-	}
+            this.ammo = Number(localStorage.checkpointAmmo);
+    	} 
+        else {
+            fromMainMenu = false;
+       	    this.health = 100;
+            this.ammo = 20;
+        }
 
         // set the default horizontal & vertical speed (accel vector)
         this.setVelocity(3, 15);
-        
-    
         
         this.spritewidth = 50;
         this.addAnimation("walk", [0, 1]);
@@ -182,12 +181,11 @@ playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend({
         me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
         
         //Rebind keys
-	me.input.bindKey(me.input.KEY.UP,     "jump", true);
- 
+        me.input.bindKey(me.input.KEY.UP, "jump", true);
     },
  
     update: function() {
-    	if(!this.alive){
+    	if(!this.alive) {
         	this.updateMovement();
     	}
         
@@ -198,11 +196,13 @@ playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend({
     		this._private.playerState.setWalkAnimation();
     	}
         
-        if (me.input.isKeyPressed('left')){
+        if (me.input.isKeyPressed('left')) {
            	this._private.playerState.moveLeft();
-        }else if (me.input.isKeyPressed('right')){
+        }
+        else if (me.input.isKeyPressed('right')) {
             this._private.playerState.moveRight();
-        }else{
+        }
+        else {
             this.vel.x = 0;
         }
 
@@ -211,17 +211,12 @@ playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend({
         	me.audio.play("Flap_Loop");
         	this._private.playerState.moveUp();
         }
-        
-        
 
         //shoot regardless of movement
         if (me.input.isKeyPressed('shoot') && this.ammo > 0) {
             me.audio.play("shoot");
-
         	this._private.playerState.shootSeed(this.lastflipX, this.pos.x, this.pos.y);
-            
 		    this.ammo = this.ammo - 1;
-
         }
         
         if(me.input.isKeyPressed('save')){
@@ -247,25 +242,27 @@ playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend({
                     this.jumping = true;
                     // play some audio
                     me.audio.play("stomp");
-                } else if(!this.isFlickering()) {
+                } 
+                else if(!this.isFlickering()) {
                     // let's flicker in case we touched an enemy
                     this.flicker(10);
-			if(res.obj.type == "MovingBlockBullet"){
-                    		this.health = this.health - 15;
-			}else{
-
-                    		this.health = this.health - res.obj.damage;
-			}
+			        if(res.obj.type == "MovingBlockBullet"){
+                        this.health = this.health - 15;
+                    }
+                    else {
+                        this.health = this.health - res.obj.damage
+                    }
+            
                     me.game.HUD.setItemValue("health", this.health);
                 }
 
-		if(this.health <= 0){
-        		me.gamestat.reset();
-       			me.levelDirector.reloadLevel();
-        		me.game.viewport.fadeOut("#000000", 150);
-			return false;
-		}
+            if(this.health <= 0) {
+            	me.gamestat.reset();
+            	me.levelDirector.reloadLevel();
+            	me.game.viewport.fadeOut("#000000", 150);
+            	return false;
             }
+        }
 
 	    if (res.obj.type == "PlayerDeath") {
         		me.gamestat.reset();
@@ -274,23 +271,22 @@ playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend({
 			return false;
 	    }
             
-            if(res.obj.type == "Apple"){
-
-		this.ammo = this.ammo + 5;
-            	this.pos.y = this.pos.y - 30;
-            	return true;
-            }
+        if(res.obj.type == "Apple") {
+            this.ammo = this.ammo + 5;
+            this.pos.y = this.pos.y - 30;
+            return true;
+        }
             
-            if(res.obj.type == "Checkpoint"){
-                if(typeof(Storage)!=="undefined"){
-             	   	localStorage.checkpointLevel = me.levelDirector.getCurrentLevelId();
+        if(res.obj.type == "Checkpoint") {
+            if(typeof(Storage)!=="undefined") {
+             	localStorage.checkpointLevel = me.levelDirector.getCurrentLevelId();
        			localStorage.checkpointHealth = this.health;
-			localStorage.checkpointAmmo = this.ammo;
+                localStorage.checkpointAmmo = this.ammo;
         		localStorage.checkpointX = this.pos.x;
         		localStorage.checkpointY = this.pos.y;
-                }
-            };
-        }
+            }
+        };
+    }
         
 
         me.game.HUD.setItemValue("health", this.health);
