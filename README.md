@@ -8,6 +8,7 @@ Add the following parameters to chrome to run Leafy Justice locally
   
   
 List of software:  
+=================  
 * Text editor eg notepad++  
 * Tiled level editor: http://www.mapeditor.org/  
 * Github app http://windows.github.com/  
