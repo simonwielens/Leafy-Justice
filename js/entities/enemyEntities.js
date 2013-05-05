@@ -146,7 +146,11 @@ var lawnmowerEntity = entity("lawnmower", me.ObjectEntity.extend({
             return true;
         }
         return false;
-    }
+    },
+	
+	onDestroyEvent: function() {
+		me.audio.stop("LawnMower");
+	}
 }));
 
 
