@@ -54,8 +54,7 @@ CreateDefaultPlayerStateObject = function(_playerEntity) {
             
         	}
 		}
-		
-		
+				
 		this.shootSeed = function(lastFlipX, pos_x, pos_y) 
 		{
 			var shot = new bulletEntity.data(lastFlipX, pos_x+5, pos_y+65, { image: 'birdSeed', spritewidth: 7 });
@@ -287,23 +286,21 @@ playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend( {
             }
         };
     }
-        
-
-        me.game.HUD.setItemValue("health", this.health);
-        me.game.HUD.setItemValue("ammo", this.ammo);
+    
+	me.game.HUD.setItemValue("health", this.health);
+    me.game.HUD.setItemValue("ammo", this.ammo);
      
-        // update animation if necessary
-        if (this.vel.x!=0 || this.vel.y!=0 || this.isFlickering()) {
-            // update objet animation
-            this.parent(this);
-            return true;
-        }
-        
-        // else inform the engine we did not perform
-        // any update (e.g. position, animation)
-        return true;
-     
-    }
+	// update animation if necessary
+	if (this.vel.x!=0 || this.vel.y!=0 || this.isFlickering()) {
+		// update objet animation
+		this.parent(this);
+		return true;
+	}
+	
+	// else inform the engine we did not perform
+	// any update (e.g. position, animation)
+	return true;  
+}
  
 }));
 
