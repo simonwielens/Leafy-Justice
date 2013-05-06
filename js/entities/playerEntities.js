@@ -194,6 +194,17 @@ playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend( {
     	if(!this.alive) {
         	this.updateMovement();
     	}
+    	
+    	//Fixing being able to fly over the lawnmower
+    	if(me.levelDirector.getCurrentLevelId() === "level02" && lawnMowerCurrentXPosition != 0){
+    		if(lawnMowerCurrentXPosition > this.pos.x){
+    			//Reset level
+            	me.gamestat.reset();
+            	me.levelDirector.reloadLevel();
+            	me.game.viewport.fadeOut("#000000", 150);
+            	return false;
+    		}
+    	}
         
         if(me.input.isKeyPressed('toggle_fly'))
     	{
@@ -239,8 +250,8 @@ playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend( {
         var res = me.game.collide(this);
          
         if (res) {
-            if (res.obj.type == me.game.ENEMY_OBJECT || res.obj.type == "MovingBlockBullet") {
-                if ((res.y > 0) && !this.jumping && res.obj.type != "MovingBlockBullet") {
+            if (res.obj.type == me.game.ENEMY_OBJECT || res.obj.type == "MovingBlockBullet" || res.obj.type == "lawnmower") {
+                if ((res.y > 0) && !this.jumping && res.obj.type == me.game.ENEMY_OBJECT) {
                     // bounce (force jump)
                     this.falling = false;
                     this.vel.y = -this.maxVel.y * me.timer.tick;
@@ -248,8 +259,7 @@ playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend( {
                     this.jumping = true;
                     // play some audio
                     me.audio.play("stomp");
-                } 
-                else if(!this.isFlickering()) {
+                }else if(!this.isFlickering()) {
                     // let's flicker in case we touched an enemy
                     this.flicker(10);
 			        if(res.obj.type == "MovingBlockBullet"){

@@ -82,6 +82,7 @@ var wheelie = entity("EnemyEntity", me.ObjectEntity.extend({
     }
 }));
 
+var lawnMowerCurrentXPosition = 0;
 
 var lawnmowerEntity = entity("lawnmower", me.ObjectEntity.extend({
     init: function(x, y, settings) {
@@ -107,8 +108,8 @@ var lawnmowerEntity = entity("lawnmower", me.ObjectEntity.extend({
         // make it collidable
         this.collidable = true;
         // make it a enemy object
-        this.type = me.game.ENEMY_OBJECT;
-        this.damage = 100;
+        this.type = "lawnmower";
+        this.damage = 10000;
         
         this.canBreakTile = true;
  
@@ -126,14 +127,11 @@ var lawnmowerEntity = entity("lawnmower", me.ObjectEntity.extend({
     update: function() {
        
        // // do nothing if not visible
-       
        if (this.pos.x >= this.endX) {
-                
             this.vel.x = 0;
-       }
-       else
-       {
+       }else{
        		this.vel.x +=  this.accel.x * me.timer.tick;
+       		lawnMowerCurrentXPosition = this.pos.x;
        }
   
   
@@ -150,6 +148,7 @@ var lawnmowerEntity = entity("lawnmower", me.ObjectEntity.extend({
     },
 	
 	onDestroyEvent: function() {
+		lawnMowerCurrentXPosition = 0;
 		me.audio.stop("LawnMower");
 	}
 }));
