@@ -152,17 +152,24 @@ playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend( {
         // call the constructor
         this.parent(x, y, settings);
         
-        if(me.levelDirector.getCurrentLevelId() == localStorage.checkpointLevel && !fromMainMenu) {
+        if(me.levelDirector.getCurrentLevelId() == localStorage.checkpointLevel && fromMainMenu) {
         	this.pos.x = Number(localStorage.checkpointX);
         	this.pos.y = Number(localStorage.checkpointY);
             //me.game.HUD.setItemValue("score", localStorage.checkpointScore);
        		this.health = Number(localStorage.checkpointHealth);
             this.ammo = Number(localStorage.checkpointAmmo);
-    	} 
-        else {
+    	}else {
+            if(fromMainMenu || !localStorage.currentPlayerHealth || !localStorage.currentPlayerAmmo){
+            	localStorage.currentPlayerHealth = 100;
+            	localStorage.currentPlayerAmmo = 20;
+       	    	this.health = 100;
+            	this.ammo = 20;
+            }else{
+            	//Loaded a new level - Retrieve health and ammo from storage
+	       		this.health = Number(localStorage.currentPlayerHealth);
+	            this.ammo = Number(localStorage.currentPlayerAmmo);
+            }
             fromMainMenu = false;
-       	    this.health = 100;
-            this.ammo = 20;
         }
 
         // set the default horizontal & vertical speed (accel vector)
@@ -233,7 +240,7 @@ playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend( {
          
         if (res) {
             if (res.obj.type == me.game.ENEMY_OBJECT || res.obj.type == "MovingBlockBullet") {
-                if ((res.y > 0) && ! this.jumping) {
+                if ((res.y > 0) && !this.jumping && res.obj.type != "MovingBlockBullet") {
                     // bounce (force jump)
                     this.falling = false;
                     this.vel.y = -this.maxVel.y * me.timer.tick;

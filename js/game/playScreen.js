@@ -9,12 +9,14 @@ var PlayScreen = me.ScreenObject.extend({
         // load a level
         me.levelDirector.loadLevel(level);
  
-        // add a default HUD to the game manager
-        me.game.addHUD(0, 430, 640, 60);
- 
-        // add a new HUD item
-        me.game.HUD.addItem("ammo", new AmmoObject(620, 10));
-        me.game.HUD.addItem("health", new HealthObject(120, 10));
+        if(me.game.HUD == null){
+	        // add a default HUD to the game manager
+	        me.game.addHUD(0, 430, 640, 60);
+	 
+	        // add a new HUD item
+	        me.game.HUD.addItem("ammo", new AmmoObject(620, 10));
+	       	me.game.HUD.addItem("health", new HealthObject(120, 10));
+        }
  
         // make sure everything is in the right order
         me.game.sort();

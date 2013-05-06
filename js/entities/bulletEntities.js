@@ -57,4 +57,4 @@ var bulletEntity = entity("bulletEntity", me.ObjectEntity.extend({
     }
 }));
 
-playerEntity.push(bulletEntity)  ;
+playerEntity.push(bulletEntity);

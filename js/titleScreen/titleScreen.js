@@ -55,7 +55,7 @@ var TitleScreen = me.ScreenObject.extend({
         // play something
         me.audio.play("cling");
 		
-		me.audio.play("BluJay_theme")
+		me.audio.play("BluJay_theme");
  
     },
  
@@ -72,15 +72,14 @@ var TitleScreen = me.ScreenObject.extend({
     update: function() {
         // Enter pressed - Start from beginning
         if (me.input.isKeyPressed('enter')) {
-		me.audio.stop("BluJay_theme");
-		fromMainMenu = true;
-        	if(this.menu[this.menuLength] == "LoadGame"){
-            		this.loadSession();
-            		me.state.change(me.state.PLAY);
-        	}else{
-				
-        		StoryManager.tellFullscreenStory("intro");
-		}
+			me.audio.stop("BluJay_theme");
+			fromMainMenu = true;
+	        if(this.menu[this.menuLength] == "LoadGame"){
+	      		this.loadSession();
+	           	me.state.change(me.state.PLAY);
+	        }else{	
+	        	StoryManager.tellFullscreenStory("intro");
+			}
         }else if(me.input.isKeyPressed('up')){
         	this.menuLength = this.menuLength - 1;
         	this.updateMenu();
@@ -99,7 +98,7 @@ var TitleScreen = me.ScreenObject.extend({
 
         this.font.draw(context, "LEAFY JUSTICE", 100, 40);
         this.font.draw(context, "NEW GAME", 40, 340);
-        this.font.draw(context, "LOAD GAME", 40, 440);
+        this.font.draw(context, "LOAD GAME", 40, 420);
         this.drawArrow(context);
         this.scrollerfont.draw(context, this.scroller, this.scrollerpos, 440);
     },
@@ -137,7 +136,7 @@ var TitleScreen = me.ScreenObject.extend({
         if(this.menuLength == 0){
         	this.font.draw(context, ">", 0, 340);
         }else if(this.menuLength == 1){
-        	this.font.draw(context, ">", 0, 440);
+        	this.font.draw(context, ">", 0, 420);
         }
     }
  

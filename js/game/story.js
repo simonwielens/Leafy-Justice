@@ -61,11 +61,15 @@ StoryEntity = me.InvisibleEntity.extend({
  
     // this function is called by the engine, when
     // an object is touched by something (here collected)
-    onCollision: function() {
+    onCollision: function(res, obj) {
         // do something when collected
 		console.log('story hit!');
 		
-		StoryManager.tellFullscreenStory(this.story);
+        if(obj.name == "mainplayer" ){
+            localStorage.currentPlayerHealth = obj.health;
+            localStorage.currentPlayerAmmo = obj.ammo;
+			StoryManager.tellFullscreenStory(this.story);
+        }
 		
     }
  

@@ -39,6 +39,7 @@ var wheelie = entity("EnemyEntity", me.ObjectEntity.extend({
             // which mean at top position for this one
             if (this.alive && (res.y > 0) && obj.falling) {
                 this.flicker(45);
+            	me.game.remove(this);
             }
         }
         

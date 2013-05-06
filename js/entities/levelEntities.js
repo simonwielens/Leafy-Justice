@@ -13,6 +13,8 @@ var LevelEntity = entity("me.LevelEntity", me.LevelEntity.extend({
     onCollision: function(res, obj) {
  
         if(obj.name == "mainplayer" ){
+            localStorage.currentPlayerHealth = obj.health;
+            localStorage.currentPlayerAmmo = obj.ammo;
             this.goTo(this.to);
         }
         
