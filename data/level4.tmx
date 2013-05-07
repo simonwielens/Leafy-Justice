@@ -762,7 +762,7 @@
    <properties>
     <property name="duration" value="250"/>
     <property name="fade" value="#000000"/>
-    <property name="to" value="level5"/>
+    <property name="to" value="level1_intro"/>
    </properties>
   </object>
  </objectgroup>

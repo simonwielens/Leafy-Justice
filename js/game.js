@@ -76,8 +76,7 @@ var game = {
 	},
 	
 	addEntity: function addEntity(entityArray){
-		var i = 0;
-		for(i = 0; i < entityArray.length; i++){
+		for(var i = 0; i < entityArray.length; i++){
 			me.entityPool.add(entityArray[i].name, entityArray[i].data);
 		}
 	},
@@ -89,6 +88,7 @@ var game = {
 		me.input.bindKey(me.input.KEY.S, 	 "save", true);
 		me.input.bindKey(me.input.KEY.F, 	 "toggle_fly", true);
 		me.input.bindKey(me.input.KEY.SPACE, 	"shoot", true);
+		me.input.bindKey(me.input.KEY.ESC, 	"menu", true);
 	}
 
 };

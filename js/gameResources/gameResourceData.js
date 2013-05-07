@@ -1,11 +1,12 @@
 var player = gameResourceData("gripe_run_right","data/kev/main_character/bird_walking_50px.png");
 var enemy = gameResourceData("wheelie_right","data/sprite/wheelie_right.png");
-var apple = gameResourceData("apple","data/kev/berries/Apple.png");
+var apple = gameResourceData("apple","data/sprite/apple.png");
 var lawnmower = gameResourceData("lawnmower","data/sprite/lawnmower_96px.png");
 var coin = gameResourceData("spinning_coin_gold","data/sprite/spinning_coin_gold.png");
 var block = gameResourceData("block","data/sprite/block.png");
 var birdSeed = gameResourceData("birdSeed","data/kev/bird_seed/seed2.png");
 var mushroom = gameResourceData("mushroom","data/sprite/mushroom.png");
+var healthIcon = gameResourceData("healthIcon","data/sprite/health.png");
 var pelletBullet = gameResourceData("pelletBullet","data/sprite/mushroom.png")
 var parrallaxBackground = gameResourceData("area01_bkg0","data/area01_parallax/area01_bkg0.png");
 var parrallaxBackground2 = gameResourceData("area01_bkg1","data/area01_parallax/area01_bkg1.png");
@@ -70,6 +71,7 @@ gameResources.addItem(coin);
 gameResources.addItem(block);
 gameResources.addItem(birdSeed);
 gameResources.addItem(mushroom);
+gameResources.addItem(healthIcon);
 gameResources.addMap(map1, level1);
 gameResources.addMap(map2, level2);
 gameResources.addMap(map3, level3);

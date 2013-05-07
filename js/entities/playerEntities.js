@@ -241,6 +241,12 @@ playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend( {
         	if(typeof(Storage)!=="undefined"){
         		localStorage.level = me.levelDirector.getCurrentLevelId();
         	}
+        } 
+        
+        if(me.input.isKeyPressed('menu')){
+	   		me.state.change(me.state.MENU);
+      		me.game.disableHUD(); 
+			return false;
         }     
      
         // check & update player movement
@@ -304,9 +310,11 @@ playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend( {
         };
     }
     
-	me.game.HUD.setItemValue("health", this.health);
-    me.game.HUD.setItemValue("ammo", this.ammo);
-     
+    if(me.game.HUD != null){
+		me.game.HUD.setItemValue("health", this.health);
+    	me.game.HUD.setItemValue("ammo", this.ammo);
+    }
+    
 	// update animation if necessary
 	if (this.vel.x!=0 || this.vel.y!=0 || this.isFlickering()) {
 		// update objet animation
