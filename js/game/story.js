@@ -21,7 +21,7 @@ var stories = {
 	intro : {
 		lines : [
 			"On cold winter's night Blue Jay or \"Leafy\" as his friends call him was collecting some berries for his wife while she cares for her eggs.",
-			"                            Help Leafy find some berries..."
+			"Help Leafy find some berries..."
 		],
 		next_state : me.state.PLAY,
 		next_level : "level1"
