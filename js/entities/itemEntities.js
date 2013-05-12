@@ -25,6 +25,19 @@ var coinEntity = entity("CoinEntity", me.CollectableEntity.extend({
    }
 }));
 
+var teleporterEntity = entity("teleporter", me.ObjectEntity.extend({
+   // extending the init function is not mandatory
+   // unless you need to add some extra initialization
+   init: function(x, y, settings) {
+       // call the parent constructor
+       this.parent(x, y, settings);
+       this.endX = settings.endX;
+       this.endY = settings.endY;
+       this.collidable = true;
+       this.type="teleporter";
+   }
+}));
+
 /*----------------
 a Mushroom entity
 ------------------------ */
@@ -250,3 +263,4 @@ itemEntity.push(moveEntityYAxis);
 itemEntity.push(mushroomEntity);
 itemEntity.push(healthEntity);
 itemEntity.push(appleEntity);
+itemEntity.push(teleporterEntity);

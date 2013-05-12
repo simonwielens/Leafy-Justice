@@ -285,6 +285,11 @@ playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend( {
             	return false;
             }
         }
+        
+        if(res.obj.type == "teleporter"){
+        	this.pos.x = res.obj.endX;
+        	this.pos.y = res.obj.endY;
+        }
 
 	    if (res.obj.type == "PlayerDeath") {
         		me.gamestat.reset();
