@@ -147,11 +147,30 @@ playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend( {
 		}
 	
 	},
- 
+	
+	savePlayerDataOnEachTick: function(dateToSave){
+		if(this.savedPlayerState.length > 180){
+			this.savedPlayerState.shift();
+		}
+		this.savedPlayerState.push({
+			x: dateToSave.x,
+			y: dateToSave.y
+		});
+	},
+	
+	rewindPlayerDataOnEachTick: function(){
+		if(this.savedPlayerState.length != 0){
+			console.log("Length Is: "+this.savedPlayerState.length);
+			var localPos = this.savedPlayerState.pop();
+			this.pos.x = localPos.x;
+			this.pos.y = localPos.y;
+		}
+	},
+	
     init: function(x, y, settings) {
         // call the constructor
         this.parent(x, y, settings);
-        
+        this.savedPlayerState = [];
         if(me.levelDirector.getCurrentLevelId() == localStorage.checkpointLevel && fromMainMenu) {
         	this.pos.x = Number(localStorage.checkpointX);
         	this.pos.y = Number(localStorage.checkpointY);
@@ -206,131 +225,133 @@ playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend( {
     		}
     	}
         
-        if(me.input.isKeyPressed('toggle_fly'))
-    	{
-    		toggle=true;
-    		this.togglePlayerState();
-    		this._private.playerState.setWalkAnimation();
-    	}
-        
-        if (me.input.isKeyPressed('left')) {
-           	this._private.playerState.moveLeft();
-        }
-        else if (me.input.isKeyPressed('right')) {
-            this._private.playerState.moveRight();
-        }
-        else {
-            this.vel.x = 0;
-        }
-
-        
-        if (me.input.isKeyPressed('jump')) {
-        	me.audio.play("Flap_Loop");
-        	this._private.playerState.moveUp();
-        }
-
-        //shoot regardless of movement
-        if (me.input.isKeyPressed('shoot') && this.ammo > 0) {
-            me.audio.play("shoot");
-        	this._private.playerState.shootSeed(this.lastflipX, this.pos.x, this.pos.y);
-		    this.ammo = this.ammo - 1;
-        }
-        
-        if(me.input.isKeyPressed('save')){
-        	//Save Game
-        	if(typeof(Storage)!=="undefined"){
-        		localStorage.level = me.levelDirector.getCurrentLevelId();
-        	}
-        } 
-        
-        if(me.input.isKeyPressed('menu')){
-	   		me.state.change(me.state.MENU);
-      		me.game.disableHUD(); 
-			return false;
-        }     
-     
-        // check & update player movement
-        this.updateMovement();
-     
-        // check for collision
-        var res = me.game.collide(this);
-         
-        if (res) {
-            if (res.obj.type == me.game.ENEMY_OBJECT || res.obj.type == "MovingBlockBullet" || res.obj.type == "lawnmower") {
-                if ((res.y > 0) && !this.jumping && res.obj.type == me.game.ENEMY_OBJECT) {
-                    // bounce (force jump)
-                    this.falling = false;
-                    this.vel.y = -this.maxVel.y * me.timer.tick;
-                    // set the jumping flag
-                    this.jumping = true;
-                    // play some audio
-                    me.audio.play("stomp");
-                }else if(!this.isFlickering()) {
-                    // let's flicker in case we touched an enemy
-                    this.flicker(10);
-			        if(res.obj.type == "MovingBlockBullet"){
-                        this.health = this.health - 15;
-                    }
-                    else {
-                        this.health = this.health - res.obj.damage
-                    }
-            
-                    me.game.HUD.setItemValue("health", this.health);
-                }
-
-            if(this.health <= 0) {
-            	me.gamestat.reset();
-            	me.levelDirector.reloadLevel();
-            	me.game.viewport.fadeOut("#000000", 150);
-            	return false;
-            }
-        }
-        
-        if(res.obj.type == "teleporter"){
-        	this.pos.x = res.obj.endX;
-        	this.pos.y = res.obj.endY;
-        }
-
-	    if (res.obj.type == "PlayerDeath") {
-        		me.gamestat.reset();
-       			me.levelDirector.reloadLevel();
-        		me.game.viewport.fadeOut("#000000", 150);
-			return false;
-	    }
-            
-        if(res.obj.type == "Apple") {
-            this.ammo = this.ammo + 5;
-            this.pos.y = this.pos.y - 30;
-            return true;
-        }
-            
-        if(res.obj.type == "Checkpoint") {
-            if(typeof(Storage)!=="undefined") {
-             	localStorage.checkpointLevel = me.levelDirector.getCurrentLevelId();
-       			localStorage.checkpointHealth = this.health;
-                localStorage.checkpointAmmo = this.ammo;
-        		localStorage.checkpointX = this.pos.x;
-        		localStorage.checkpointY = this.pos.y;
-            }
-        };
-    }
-    
-    if(me.game.HUD != null){
-		me.game.HUD.setItemValue("health", this.health);
-    	me.game.HUD.setItemValue("ammo", this.ammo);
-    }
-    
-	// update animation if necessary
-	if (this.vel.x!=0 || this.vel.y!=0 || this.isFlickering()) {
-		// update objet animation
-		this.parent(this);
-		return true;
-	}
+        if(me.input.isKeyPressed('rewind')){
+			this.rewindPlayerDataOnEachTick();
+        }else{
+        	this.savePlayerDataOnEachTick(this.pos);
+	        if(me.input.isKeyPressed('toggle_fly')){
+	    		toggle=true;
+	    		this.togglePlayerState();
+	    		this._private.playerState.setWalkAnimation();
+	    	}
+	        
+	        if (me.input.isKeyPressed('left')) {
+	           	this._private.playerState.moveLeft();
+	        }else if (me.input.isKeyPressed('right')) {
+	            this._private.playerState.moveRight();
+	        }else {
+	            this.vel.x = 0;
+	        }
 	
-	// else inform the engine we did not perform
-	// any update (e.g. position, animation)
-	return true;  
-}
+	        
+	        if (me.input.isKeyPressed('jump')) {
+	        	me.audio.play("Flap_Loop");
+	        	this._private.playerState.moveUp();
+	        }
+	
+	        //shoot regardless of movement
+	        if (me.input.isKeyPressed('shoot') && this.ammo > 0) {
+	            me.audio.play("shoot");
+	        	this._private.playerState.shootSeed(this.lastflipX, this.pos.x, this.pos.y);
+			    this.ammo = this.ammo - 1;
+	        }
+	        
+	        if(me.input.isKeyPressed('save')){
+	        	//Save Game
+	        	if(typeof(Storage)!=="undefined"){
+	        		localStorage.level = me.levelDirector.getCurrentLevelId();
+	        	}
+	        } 
+	        
+	        if(me.input.isKeyPressed('menu')){
+		   		me.state.change(me.state.MENU);
+	      		me.game.disableHUD(); 
+				return false;
+	        }     
+	     
+	        // check & update player movement
+	        this.updateMovement();
+	     
+	        // check for collision
+	        var res = me.game.collide(this);
+	         
+	        if (res) {
+	            if (res.obj.type == me.game.ENEMY_OBJECT || res.obj.type == "MovingBlockBullet" || res.obj.type == "lawnmower") {
+	                if ((res.y > 0) && !this.jumping && res.obj.type == me.game.ENEMY_OBJECT) {
+	                    // bounce (force jump)
+	                    this.falling = false;
+	                    this.vel.y = -this.maxVel.y * me.timer.tick;
+	                    // set the jumping flag
+	                    this.jumping = true;
+	                    // play some audio
+	                    me.audio.play("stomp");
+	                }else if(!this.isFlickering()) {
+	                    // let's flicker in case we touched an enemy
+	                    this.flicker(10);
+				        if(res.obj.type == "MovingBlockBullet"){
+	                        this.health = this.health - 15;
+	                    }
+	                    else {
+	                        this.health = this.health - res.obj.damage
+	                    }
+	            
+	                    me.game.HUD.setItemValue("health", this.health);
+	                }
+	
+		            if(this.health <= 0) {
+		            	me.gamestat.reset();
+		            	me.levelDirector.reloadLevel();
+		            	me.game.viewport.fadeOut("#000000", 150);
+		            	return false;
+		            }
+		        }
+		        
+		        if(res.obj.type == "teleporter"){
+		        	this.pos.x = res.obj.endX;
+		        	this.pos.y = res.obj.endY;
+		        }
+		
+			    if (res.obj.type == "PlayerDeath") {
+		        		me.gamestat.reset();
+		       			me.levelDirector.reloadLevel();
+		        		me.game.viewport.fadeOut("#000000", 150);
+					return false;
+			    }
+		            
+		        if(res.obj.type == "Apple") {
+		            this.ammo = this.ammo + 5;
+		            this.pos.y = this.pos.y - 30;
+		            return true;
+		        }
+		            
+		        if(res.obj.type == "Checkpoint") {
+		            if(typeof(Storage)!=="undefined") {
+		             	localStorage.checkpointLevel = me.levelDirector.getCurrentLevelId();
+		       			localStorage.checkpointHealth = this.health;
+		                localStorage.checkpointAmmo = this.ammo;
+		        		localStorage.checkpointX = this.pos.x;
+		        		localStorage.checkpointY = this.pos.y;
+		            }
+		        }
+		    }
+		}
+		
+	    if(me.game.HUD != null){
+			me.game.HUD.setItemValue("health", this.health);
+	    	me.game.HUD.setItemValue("ammo", this.ammo);
+	    }
+	    
+		// update animation if necessary
+		if (this.vel.x!=0 || this.vel.y!=0 || this.isFlickering()) {
+			// update objet animation
+			this.parent(this);
+			return true;
+		}
+		
+		// else inform the engine we did not perform
+		// any update (e.g. position, animation)
+		return true;  
+	}
  
 }));
 

@@ -89,6 +89,7 @@ var game = {
 		me.input.bindKey(me.input.KEY.F, 	 "toggle_fly", true);
 		me.input.bindKey(me.input.KEY.SPACE, 	"shoot", true);
 		me.input.bindKey(me.input.KEY.ESC, 	"menu", true);
+		me.input.bindKey(me.input.KEY.R, 	 "rewind");
 	}
 
 };
