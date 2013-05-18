@@ -148,13 +148,21 @@ playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend( {
 	
 	},
 	
-	savePlayerDataOnEachTick: function(dateToSave){
+	savePlayerDataOnEachTick: function(dataToSave){
 		if(this.savedPlayerState.length > 180){
 			this.savedPlayerState.shift();
 		}
 		this.savedPlayerState.push({
-			x: dateToSave.x,
-			y: dateToSave.y
+			x: dataToSave.x,
+			y: dataToSave.y,
+			health: dataToSave.health,
+			ammo: dataToSave.ammo,
+			velX: dataToSave.velX,
+			velY: dataToSave.velY,
+			flyButtonPressed: dataToSave.flyButtonPressed,
+			bulletShot: dataToSave.bulletShot,
+			isMoveLeft: dataToSave.isMoveLeft,
+			isMoveRight: dataToSave.isMoveRight
 		});
 	},
 	
@@ -164,6 +172,26 @@ playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend( {
 			var localPos = this.savedPlayerState.pop();
 			this.pos.x = localPos.x;
 			this.pos.y = localPos.y;
+			this.health = localPos.health;
+			this.ammo = localPos.ammo;
+			this.vel.x = localPos.velX;
+			this.vel.y = localPos.velY;
+			
+	        if(localPos.flyButtonPressed){
+	    		toggle = true;
+	    		this.togglePlayerState();
+	    		this._private.playerState.setWalkAnimation();
+	    	}
+	    	
+	        if (localPos.bulletShot) {
+			    this.ammo = this.ammo + 1;
+	        }
+	        
+	        if (localPos.isMoveLeft) {
+	           	this._private.playerState.moveLeft();
+	        }else if (localPos.isMoveRight) {
+	            this._private.playerState.moveRight();
+	        }
 		}
 	},
 	
@@ -211,6 +239,7 @@ playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend( {
  
     update: function() {
     	if(!this.alive) {
+        	this.savedPlayerState = [];
         	this.updateMovement();
     	}
     	
@@ -228,21 +257,36 @@ playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend( {
         if(me.input.isKeyPressed('rewind')){
 			this.rewindPlayerDataOnEachTick();
         }else{
-        	this.savePlayerDataOnEachTick(this.pos);
-	        if(me.input.isKeyPressed('toggle_fly')){
-	    		toggle=true;
+        	var isFlyButtonToggled = me.input.isKeyPressed('toggle_fly');
+        	var isBulletShot = me.input.isKeyPressed('shoot') && this.ammo > 0;
+        	var isMoveLeft = me.input.isKeyPressed('left');
+        	var isMoveRight = me.input.isKeyPressed('right');
+        	this.savePlayerDataOnEachTick({
+        		x: this.pos.x,
+        		y: this.pos.y,
+        		health: this.health,
+				ammo: this.ammo,
+				velX: this.vel.x,
+				velY: this.vel.y,
+				flyButtonPressed: isFlyButtonToggled,
+				bulletShot: isBulletShot,
+				isMoveLeft: isMoveLeft,
+				isMoveRight: isMoveRight
+        	});
+        	
+	        if(isFlyButtonToggled){
+	    		toggle = true;
 	    		this.togglePlayerState();
 	    		this._private.playerState.setWalkAnimation();
 	    	}
 	        
-	        if (me.input.isKeyPressed('left')) {
+	        if (isMoveLeft) {
 	           	this._private.playerState.moveLeft();
-	        }else if (me.input.isKeyPressed('right')) {
+	        }else if (isMoveRight) {
 	            this._private.playerState.moveRight();
 	        }else {
 	            this.vel.x = 0;
 	        }
-	
 	        
 	        if (me.input.isKeyPressed('jump')) {
 	        	me.audio.play("Flap_Loop");
@@ -250,7 +294,7 @@ playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend( {
 	        }
 	
 	        //shoot regardless of movement
-	        if (me.input.isKeyPressed('shoot') && this.ammo > 0) {
+	        if (isBulletShot) {
 	            me.audio.play("shoot");
 	        	this._private.playerState.shootSeed(this.lastflipX, this.pos.x, this.pos.y);
 			    this.ammo = this.ammo - 1;
@@ -342,7 +386,7 @@ playerEntity1 = entity("mainPlayer", me.ObjectEntity.extend( {
 	    }
 	    
 		// update animation if necessary
-		if (this.vel.x!=0 || this.vel.y!=0 || this.isFlickering()) {
+		if (this.vel.x != 0 || this.vel.y != 0 || this.isFlickering()) {
 			// update objet animation
 			this.parent(this);
 			return true;
